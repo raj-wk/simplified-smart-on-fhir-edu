@@ -1,0 +1,39 @@
+<html>
+<head>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 5px;
+            text-align: left;
+        }
+    </style>
+</head>
+
+<body onload="getAuthCode();">
+<script type="text/javascript">
+
+    var authCode = getParameterByName('code');
+
+    function getAuthCode(){
+        window.opener.authorization_code = authCode;
+        $("#authCode", window.opener.document).text(authCode);
+        $("#authCode2", window.opener.document).text(authCode);
+    }
+
+    function getParameterByName(name) {
+        name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+        var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                results = regex.exec(location.search);
+        return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+    }
+
+
+</script>
+<h2>YAY! I WAS AUTHORIZED!</h2>
+</body>
+</html>

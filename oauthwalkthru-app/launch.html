@@ -1,0 +1,326 @@
+<html>
+<head>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="demo.css" />
+
+    <!--#58585A-->
+    <!--#00AEEF-->
+</head>
+<body>
+<script type="text/javascript">
+
+    <!-- STEP 1 -->
+    var iss = getParameterByName('iss');
+    var launchId = getParameterByName('launch');
+    var endpointDiscoveryURL = iss + "/metadata";
+    <!-- STEP 1 -->
+    var authorizationEndpoint;
+    var tokenEndpoint;
+    var registrationEndpoint;
+
+    //Authorization Params 
+    var client_id = "3d0364fd-ff10-4ea8-83db-9594a83344f0"; //utdcql hspc sandbox
+    var response_type = "code";
+    var scopes = "patient/*.read launch";
+    var redirect_uri = "https://raj-wk.github.io/simplified-smart-on-fhir-edu/oauthwalkthru-app/";
+    var state = "34892938RI92R9ER9E"; //hard coded for now
+
+    //Token Params
+    var authorization_code;
+    var grant_type = "authorization_code";
+
+    //Token response values
+    var access_token;
+    var token_type;
+    var expires_in;
+    var scope;
+    var patient_id;
+
+    //Data retrieval
+    var fhirDataService;
+
+    $(document).ready(function(){
+        <!-- STEP 1 -->
+        $("#launchURL").text(window.location.href);
+        $("#iss").text(iss);
+        $("#launchId").text(launchId);
+        $("#endpointDiscoveryURL").text(endpointDiscoveryURL);
+        <!-- STEP 1 -->
+
+        $("#clientId").text(client_id);
+        $("#clientId2").text(client_id);
+        $("#responseType").text(response_type);
+        $("#scopes").text(scopes);
+        $("#state").text(state);
+        $("#grantType").text(grant_type);
+        $("#redirectUri").text(redirect_uri);
+    });
+
+    function getParameterByName(name) {
+        name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+        var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                results = regex.exec(location.search);
+        return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+    }
+
+    <!-- STEP 2 -->
+    function callDiscoveryEndpoint(){
+        $.get(endpointDiscoveryURL, function(data){
+            var securityExtension = data.rest[0].security.extension;
+            var securityExtensionName;
+            var nextExtensionName;
+            var nextExtensionValue;
+            for(var i = 0; i < securityExtension.length; i++){
+                securityExtensionName = JSON.stringify(securityExtension[i].url).replace(/"/g, "");
+                if(securityExtensionName.indexOf("http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris") != -1){
+                    var securityExtensionList = securityExtension[i].extension;
+                    for(var i = 0; i < 3; i++){
+                        nextExtensionName = JSON.stringify(securityExtensionList[i].url).replace(/"/g, "");
+                        nextExtension = JSON.stringify(securityExtensionList[i].valueUri).replace(/"/g, "");
+                        if(nextExtensionName.indexOf("authorize") != -1){
+                            authorizationEndpoint = nextExtension;
+                        }
+                        else if(nextExtensionName.indexOf("token") != -1){
+                            tokenEndpoint = nextExtension;
+                        }
+                        $("#authorizationEndpoint1").text(authorizationEndpoint);
+                        $("#authorizationEndpoint2").text(authorizationEndpoint);
+                        $("#tokenEndpoint1").text(tokenEndpoint);
+                        $("#tokenEndpoint2").text(tokenEndpoint);
+                    }
+                }
+            }
+        },  "json");
+
+    }
+    <!-- STEP 2 -->
+
+    <!-- STEP 3 -->
+    function callAuthorizationEndpoint(){
+        var authorizationURL = authorizationEndpoint + encodeURI("?client_id=" + client_id + "&response_type=" + response_type + "&scope=" + scopes + "&launch=" + launchId + "&aud=" + iss + "&redirect_uri=" + redirect_uri + "&state=" + state);
+        alert(authorizationURL);
+        newPopup(authorizationURL);
+    }
+    <!-- STEP 3 -->
+
+    <!-- STEP 4 -->
+    function callTokenEndpoint(){
+        if(authorization_code != null){
+            $.ajax({
+                url: tokenEndpoint,
+                dataType: "json",
+                type: 'POST',
+                data: {
+                    code: $("#authCode2").text(),
+                    grant_type: grant_type,
+                    redirect_uri: redirect_uri,
+                    client_id: client_id
+                }
+            }).done(function(resp){
+                        access_token = resp.access_token;
+                        token_type = resp.token_type;
+                        expires_in = resp.expires_in;
+                        scope = resp.scope;
+                        patient_id = resp.patient;
+                        fhirDataService = iss + "/Observation?subject:Patient=" + patient_id + "&code=" + "8302-2";
+
+                        $("#accessToken").text(access_token);
+                        $("#accessToken2").text(access_token);
+                        $("#tokenType").text(token_type);
+                        $("#expiresIn").text(expires_in);
+                        $("#scope").text(scope);
+                        $("#patientId").text(patient_id);
+                        $("#fhirRESTDataService").text(fhirDataService);
+                    }).fail(function(){
+                        console.log("failed");
+                    });;
+
+        }
+        else{
+            alert("No authorization code has been acquired!");
+        }
+    }
+    <!-- STEP 4 -->
+
+    function showAccessToken(){
+        if(access_token != null){
+
+            alert(access_token);
+        }
+        else{
+            alert("No access token has been acquired!");
+        }
+    }
+
+    function showTokenAuthHeader(){
+        if(access_token != null){
+            alert(access_token + ": Bearer" + access_token);
+        }
+        else{
+            alert("No access token has been acquired!");
+        }
+    }
+
+    function callDataPopup(){
+        newPopup("data.html");
+    }
+
+    // Popup window code
+    function newPopup(url) {
+        popupWindow = window.open(
+                url,'popUpWindow','height=700,width=800,left=10,top=10,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no,status=yes')
+    }
+
+</script>
+<div align="center" width="900">
+    <div><img src="hspc-logo-main-2.png" width="900px"  /></div>
+<div id="appLaunch" class=box>
+    <div class="box_inside">
+    <h2 class="box_head">STEP 1: Launch Notification</h2>
+    <table class="table table-bordered">
+        <tr>
+            <td>App launch notification called:</td><td style="font-weight: bold" id="launchURL"></td>
+        </tr>
+        <tr>
+            <td>Issuer:</td><td id="iss" style="font-weight: bold"></td>
+        </tr>
+        <tr>
+            <td>Launch ID:</td><td id="launchId" style="font-weight: bold"></td>
+        </tr>
+    </table>
+    </div>
+</div>
+<br/>
+<br/>
+<br/>
+<div id="endpointDiscoveryInfo" class=box>
+    <div class="box_inside">
+        <h2 class="box_head">STEP 2: Endpoint Discovery</h2>
+
+        <table class="table table-bordered">
+        <tr>
+            <td><button onclick="callDiscoveryEndpoint();">GET</button>&nbsp;&nbsp;Discovery Endpoint (ConformanceStatement):</td><td id="endpointDiscoveryURL"></td>
+        </tr>
+        <tr>
+            <td>Authorization Endpoint:</td><td id="authorizationEndpoint1"></td>
+        </tr>
+        <tr>
+            <td>Token Endpoint:</td><td id="tokenEndpoint1"></td>
+        </tr>
+        </table>
+    </div>
+</div>
+<br/>
+<br/>
+<br/>
+<div id="authorizationInfo" class=box>
+    <div class="box_inside">
+        <h2 class="box_head">STEP 3: Authorization</h2>
+        <table class="table table-bordered">
+        <tr>
+            <td><button onclick="callAuthorizationEndpoint();">GET</button>&nbsp;&nbsp;Authorization Endpoint:</td><td id="authorizationEndpoint2"></td>
+        </tr>
+        <tr>
+            <td style="font-weight: bold">URL Parameters</td><td></td>
+        </tr>
+        <tr>
+            <td>client_id</td><td style="font-weight: bold" id="clientId"></td>
+        </tr>
+        <tr>
+            <td>response_type</td><td style="font-weight: bold" id="responseType"></td>
+        </tr>
+        <tr>
+            <td>scope</td><td style="font-weight: bold" id="scopes"></td>
+        </tr>
+        <tr>
+            <td>state</td><td style="font-weight: bold" id="state"></td>
+        </tr>
+        <tr>
+            <td colspan="2">&nbsp;</td>
+        </tr>
+        <tr>
+            <td>Returned Authorization Code</td><td style="font-weight: bold" id="authCode"></td>
+        </tr>
+    </table>
+        </div>
+</div>
+<br/>
+<br/>
+<br/>
+<div id="tokenInfo" class=box>
+    <div class="box_inside">
+        <h2 class="box_head">STEP 4: Acquire Access Token</h2>
+        <table class="table table-bordered">
+        <tr>
+            <td><button onclick="callTokenEndpoint();">POST</button>&nbsp;&nbsp;Token Endpoint:</td><td id="tokenEndpoint2"></td>
+        </tr>
+        <tr>
+            <td style="font-weight: bold">POST Parameters</td><td></td>
+        </tr>
+        <tr>
+            <td>authorization_code</td><td style="font-weight: bold" id="authCode2"></td>
+        </tr>
+        <tr>
+            <td>grant_type</td><td style="font-weight: bold" id="grantType"></td>
+        </tr>
+        <tr>
+            <td>redirectUri</td><td style="font-weight: bold" id="redirectUri"></td>
+        </tr>
+        <tr>
+            <td>client_id</td><td style="font-weight: bold" id="clientId2"></td>
+        </tr>
+        <tr>
+            <td style="font-weight: bold">POST Response</td><td></td>
+        </tr>
+        <tr>
+            <td>access_token</td><td><button onclick="showAccessToken();">SHOW</button></td>
+        </tr>
+        <tr>
+            <td>token_type</td><td style="font-weight: bold" id="tokenType"></td>
+        </tr>
+        <tr>
+            <td>expires_in</td><td style="font-weight: bold" id="expiresIn"></td>
+        </tr>
+        <tr>
+            <td>scope</td><td style="font-weight: bold" id="scope"></td>
+        </tr>
+        <tr>
+            <td>patient</td><td style="font-weight: bold" id="patientId"></td>
+        </tr>
+    </table>
+        </div>
+</div>
+<br/>
+<br/>
+<br/>
+<div id="dataInfo" class=box>
+    <div class="box_inside">
+        <h2 class="box_head">STEP 5: Acquire Data</h2>
+        <table class="table table-bordered">
+        <tr>
+            <td><button onclick="callDataPopup();">GET</button>&nbsp;&nbsp;FHIR REST Data Service:</td><td id="fhirRESTDataService"></td>
+        </tr>
+        <tr>
+            <td style="font-weight: bold">HTTP Headers</td><td></td>
+        </tr>
+        <tr>
+            <td>Authorization</td><td><button onclick="showTokenAuthHeader();">SHOW</button></td>
+        </tr>
+    </table>
+        </div>
+</div>
+    <br/>
+    <br/>
+    <br/>
+</div>
+</body>
+</html>

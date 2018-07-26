@@ -1,0 +1,41 @@
+<html>
+<head>
+    <script src="fhir-client.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+    <script src="prettyprint.js"></script>
+
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 5px;
+            text-align: left;
+        }
+    </style>
+</head>
+
+<body onload="callDataService();">
+<script type="text/javascript">
+    function callDataService(){
+        $.ajax({
+            url: window.opener.fhirDataService,
+            dataType: "json",
+            type: 'GET',
+            <!-- The access token is set in the headers for the data query. -->
+            headers: {"Authorization" : "Bearer " + window.opener.access_token}
+        }).done(function(resp){
+                    var tbl = prettyPrint(resp);
+                    console.log(tbl)
+                    $("body").append(tbl);
+                }).fail(function(){
+                    $("body").html("<div>FHIR DATA REQUEST FAILED!</div>")
+                });;
+    }
+
+
+</script>
+
+</body>
+</html>
