@@ -135,7 +135,7 @@
 
 <h1 id="project-setup">Project Setup</h1>
 
-<p>First, you&rsquo;ll want to fork this tutorial from <a href="https://github.com/raj-wk/simplified-smart-on-fhir-edu">smart-on-fhir-tutorial</a> to your GitHub account.</p>
+<p>First, you&rsquo;ll want to fork this tutorial from <a href="https://github.com/raj-wk/simplified-smart-on-fhir-edu">simplified-smart-on-fhir-edu</a> to your GitHub account.</p>
 
 <p>The <code class="prettyprint">simplified-smart-on-fhir-edu/source/example-smart-app</code> folder contains the example SMART app which you&rsquo;ll be using throughout this tutorial. Let&rsquo;s take a look at some of the notable files contained within:</p>
 
@@ -145,11 +145,7 @@
 
 <p>Additional documentation on fhir-client.js can be found <a href="http://docs.smarthealthit.org/clients/javascript/">here</a>.</p>
 
-<aside class="notice">
-This tutorial is designed to have a minimal footprint so we made the decision to directly include fhir-client.js for simplicity. For your production applications we&rsquo;d recommend pulling in fhir-client.js using npm or some other package manager to easily keep your application up to date.
-</aside>
-
-<p><strong>launch.html</strong></p>
+<p><strong>launch.html</strong></p> 
 
 <p>launch.html is the SMART app&rsquo;s initial entry point and in a real production environment, would be invoked by the application launching your SMART app (for instance, the EHR or patient portal). In the <a href="http://docs.smarthealthit.org/">SMART documentation</a>, this is your app&rsquo;s &ldquo;launch URL&rdquo;. In this tutorial, this page will be invoked when you launch your app from HSPC.</p>
 
@@ -176,7 +172,7 @@ This tutorial is designed to have a minimal footprint so we made the decision to
 </code></pre>
 
 <blockquote>
-<p>Go to your GitHub account, select Repositories tab and select smart-on-fhir-tutorial repo. Select Branch button and switch to gh-pages branch. Directly edit <code class="prettyprint">/example-smart-app/index.html</code> by clicking on the pencil icon.  Once done with the change, commit directly to gh-pages branch.</p>
+<p>Go to your GitHub account, select Repositories tab and select simplified-smart-on-fhir-edu repo. Select Branch button and switch to gh-pages branch. Directly edit <code class="prettyprint">/example-smart-app/index.html</code> by clicking on the pencil icon.  Once done with the change, commit directly to gh-pages branch.</p>
 
 <p>The SMART app will be available at:</p>
 </blockquote>
@@ -203,7 +199,7 @@ GitHub Pages sites have a limit of 10 builds per hour, so if your page isn&rsquo
 
 <h1 id="registration">Registration</h1>
 
-<p>Now that we have a deployed SMART app, let&rsquo;s register it to access HSPC&rsquo;s FHIR resources. Manually register your app in HSPC Sandbox
+<p>Now that we have a deployed SMART app, let&rsquo;s register it to access HSPC&rsquo;s FHIR resources. Manually register your app in HSPC Sandbox <a href="https://sandbox.hspconsortium.org/#/start">https://sandbox.hspconsortium.org/#/start</a>
 
 <table><thead>
 <tr>
@@ -216,40 +212,32 @@ GitHub Pages sites have a limit of 10 builds per hour, so if your page isn&rsquo
 <td><code class="prettyprint">&lt;gh-username&gt; amazing SMART app</code> Any name will do.</td>
 </tr>
 <tr>
-<td>SMART Launch URI</td>
+<td>App Launch URI</td>
 <td><code class="prettyprint">https://&lt;gh-username&gt;.github.io/simplified-smart-on-fhir-edu/example-smart-app/launch.html</code></td>
 </tr>
 <tr>
-<td>Redirect URI</td>
+<td>App Redirect URI</td>
 <td><code class="prettyprint">https://&lt;gh-username&gt;.github.io/simplified-smart-on-fhir-edu/example-smart-app/</code></td>
 </tr>
 <tr>
 <td>App Type</td>
-<td><code class="prettyprint">Provider</code> Provider facing app</td>
+<td><code class="prettyprint">Provider</code> Public Client</td>
 </tr>
 <tr>
-<td>FHIR Spec</td>
-<td><code class="prettyprint">dstu2</code> FHIR Version.</td>
+<td>Allow Offline App</td>
+<td>Uncheck if it already checked.</td>
 </tr>
 <tr>
-<td>Authorized</td>
-<td><code class="prettyprint">Yes</code> Authorized App will go through secured OAuth 2 login.</td>
+<td>Patient Scoped App</td>
+<td>Uncheck if it already checked.</td>
 </tr>
 <tr>
-<td>Standard Scopes</td>
-<td>These scopes are required to launch the SMART app.</td>
-</tr>
-<tr>
-<td>User Scopes</td>
-<td>None</td>
-</tr>
-<tr>
-<td>Patient Scopes</td>
-<td>Locate the <strong><em>Patient Scopes</em></strong> table and select the <strong><em>Patient</em></strong> read and <strong><em>Observation</em></strong> read scopes.</td>
+<td>Scopes</td>
+<td>scopes are required to launch the SMART app and will be automatically assigned by HSPC. You will have oppurtunity to change it after you complete this step.</td>
 </tr>
 </tbody></table>
 
-<p>Click &ldquo;Register&rdquo; to complete the process. This will add the app to your account and create a client id for app authorization.</p>
+<p>Click &ldquo;Save&rdquo; to complete the process. This will add the app to your account and create a client id for app authorization.</p>
 
 <p>The new OAuth 2 client id will be generated.</p>
 
@@ -302,7 +290,7 @@ GitHub Pages sites have a limit of 10 builds per hour, so if your page isn&rsquo
 </code></pre>
 
 <blockquote>
-<p>Make sure to replace CLIENT_ID with the client id provided in code console and redeploy your site.</p>
+<p>Make sure to replace CLIENT_ID with the client id provided in HSPC app registration details and redeploy your site.</p>
 </blockquote>
 
 <p>The responsibility of launch.html is to redirect to the appropriate FHIR authorization server. As you can see in the code, fhir-client makes our job pretty easy. All we have to do is call <code class="prettyprint">FHIR.oauth2.authorize</code> and supply the client_id generated by the code console during registration and the scopes we registered.</p>
@@ -416,85 +404,6 @@ The OAuth 2 client id is an identifier, not a secret. As such, it does not need 
 
 <h1 id="access-fhir-resource">Access FHIR Resource</h1>
 
-<blockquote>
-<p>example-smart-app.js - onReady</p>
-</blockquote>
-<pre class="highlight javascript"><code><span class="p">...</span>
-<span class="kd">function</span> <span class="nx">onReady</span><span class="p">(</span><span class="nx">smart</span><span class="p">)</span>  <span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="nx">smart</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">'patient'</span><span class="p">))</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">patient</span> <span class="o">=</span> <span class="nx">smart</span><span class="p">.</span><span class="nx">patient</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">pt</span> <span class="o">=</span> <span class="nx">patient</span><span class="p">.</span><span class="nx">read</span><span class="p">();</span>
-    <span class="kd">var</span> <span class="nx">obv</span> <span class="o">=</span> <span class="nx">smart</span><span class="p">.</span><span class="nx">patient</span><span class="p">.</span><span class="nx">api</span><span class="p">.</span><span class="nx">fetchAll</span><span class="p">({</span>
-                  <span class="na">type</span><span class="p">:</span> <span class="s1">'Observation'</span><span class="p">,</span>
-                  <span class="na">query</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="na">code</span><span class="p">:</span> <span class="p">{</span>
-                      <span class="na">$or</span><span class="p">:</span> <span class="p">[</span><span class="s1">'http://loinc.org|8302-2'</span><span class="p">,</span> <span class="s1">'http://loinc.org|8462-4'</span><span class="p">,</span>
-                            <span class="s1">'http://loinc.org|8480-6'</span><span class="p">,</span> <span class="s1">'http://loinc.org|2085-9'</span><span class="p">,</span>
-                            <span class="s1">'http://loinc.org|2089-1'</span><span class="p">,</span> <span class="s1">'http://loinc.org|55284-4'</span><span class="p">]</span>
-                          <span class="p">}</span>
-                         <span class="p">}</span>
-                <span class="p">});</span>
-
-    <span class="nx">$</span><span class="p">.</span><span class="nx">when</span><span class="p">(</span><span class="nx">pt</span><span class="p">,</span> <span class="nx">obv</span><span class="p">).</span><span class="nx">fail</span><span class="p">(</span><span class="nx">onError</span><span class="p">);</span>
-
-    <span class="nx">$</span><span class="p">.</span><span class="nx">when</span><span class="p">(</span><span class="nx">pt</span><span class="p">,</span> <span class="nx">obv</span><span class="p">).</span><span class="nx">done</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">patient</span><span class="p">,</span> <span class="nx">obv</span><span class="p">)</span> <span class="p">{</span>
-      <span class="kd">var</span> <span class="nx">byCodes</span> <span class="o">=</span> <span class="nx">smart</span><span class="p">.</span><span class="nx">byCodes</span><span class="p">(</span><span class="nx">obv</span><span class="p">,</span> <span class="s1">'code'</span><span class="p">);</span>
-      <span class="kd">var</span> <span class="nx">gender</span> <span class="o">=</span> <span class="nx">patient</span><span class="p">.</span><span class="nx">gender</span><span class="p">;</span>
-      <span class="kd">var</span> <span class="nx">dob</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="nx">patient</span><span class="p">.</span><span class="nx">birthDate</span><span class="p">);</span>
-      <span class="kd">var</span> <span class="nx">day</span> <span class="o">=</span> <span class="nx">dob</span><span class="p">.</span><span class="nx">getDate</span><span class="p">();</span>
-      <span class="kd">var</span> <span class="nx">monthIndex</span> <span class="o">=</span> <span class="nx">dob</span><span class="p">.</span><span class="nx">getMonth</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
-      <span class="kd">var</span> <span class="nx">year</span> <span class="o">=</span> <span class="nx">dob</span><span class="p">.</span><span class="nx">getFullYear</span><span class="p">();</span>
-
-      <span class="kd">var</span> <span class="nx">dobStr</span> <span class="o">=</span> <span class="nx">monthIndex</span> <span class="o">+</span> <span class="s1">'/'</span> <span class="o">+</span> <span class="nx">day</span> <span class="o">+</span> <span class="s1">'/'</span> <span class="o">+</span> <span class="nx">year</span><span class="p">;</span>
-      <span class="kd">var</span> <span class="nx">fname</span> <span class="o">=</span> <span class="s1">''</span><span class="p">;</span>
-      <span class="kd">var</span> <span class="nx">lname</span> <span class="o">=</span> <span class="s1">''</span><span class="p">;</span>
-
-      <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">patient</span><span class="p">.</span><span class="nx">name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!==</span> <span class="s1">'undefined'</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">fname</span> <span class="o">=</span> <span class="nx">patient</span><span class="p">.</span><span class="nx">name</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">given</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">' '</span><span class="p">);</span>
-        <span class="nx">lname</span> <span class="o">=</span> <span class="nx">patient</span><span class="p">.</span><span class="nx">name</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">family</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">' '</span><span class="p">);</span>
-      <span class="p">}</span>
-
-      <span class="kd">var</span> <span class="nx">height</span> <span class="o">=</span> <span class="nx">byCodes</span><span class="p">(</span><span class="s1">'8302-2'</span><span class="p">);</span>
-      <span class="kd">var</span> <span class="nx">systolicbp</span> <span class="o">=</span> <span class="nx">getBloodPressureValue</span><span class="p">(</span><span class="nx">byCodes</span><span class="p">(</span><span class="s1">'55284-4'</span><span class="p">),</span><span class="s1">'8480-6'</span><span class="p">);</span>
-      <span class="kd">var</span> <span class="nx">diastolicbp</span> <span class="o">=</span> <span class="nx">getBloodPressureValue</span><span class="p">(</span><span class="nx">byCodes</span><span class="p">(</span><span class="s1">'55284-4'</span><span class="p">),</span><span class="s1">'8462-4'</span><span class="p">);</span>
-      <span class="kd">var</span> <span class="nx">hdl</span> <span class="o">=</span> <span class="nx">byCodes</span><span class="p">(</span><span class="s1">'2085-9'</span><span class="p">);</span>
-      <span class="kd">var</span> <span class="nx">ldl</span> <span class="o">=</span> <span class="nx">byCodes</span><span class="p">(</span><span class="s1">'2089-1'</span><span class="p">);</span>
-
-      <span class="kd">var</span> <span class="nx">p</span> <span class="o">=</span> <span class="nx">defaultPatient</span><span class="p">();</span>
-      <span class="nx">p</span><span class="p">.</span><span class="nx">birthdate</span> <span class="o">=</span> <span class="nx">dobStr</span><span class="p">;</span>
-      <span class="nx">p</span><span class="p">.</span><span class="nx">gender</span> <span class="o">=</span> <span class="nx">gender</span><span class="p">;</span>
-      <span class="nx">p</span><span class="p">.</span><span class="nx">fname</span> <span class="o">=</span> <span class="nx">fname</span><span class="p">;</span>
-      <span class="nx">p</span><span class="p">.</span><span class="nx">lname</span> <span class="o">=</span> <span class="nx">lname</span><span class="p">;</span>
-      <span class="nx">p</span><span class="p">.</span><span class="nx">age</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">calculateAge</span><span class="p">(</span><span class="nx">dob</span><span class="p">));</span>
-
-      <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">height</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">'undefined'</span> <span class="o">&amp;&amp;</span> <span class="k">typeof</span> <span class="nx">height</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">valueQuantity</span><span class="p">.</span><span class="nx">value</span> <span class="o">!=</span> <span class="s1">'undefined'</span> <span class="o">&amp;&amp;</span> <span class="k">typeof</span> <span class="nx">height</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">valueQuantity</span><span class="p">.</span><span class="nx">unit</span> <span class="o">!=</span> <span class="s1">'undefined'</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">p</span><span class="p">.</span><span class="nx">height</span> <span class="o">=</span> <span class="nx">height</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">valueQuantity</span><span class="p">.</span><span class="nx">value</span> <span class="o">+</span> <span class="s1">' '</span> <span class="o">+</span> <span class="nx">height</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">valueQuantity</span><span class="p">.</span><span class="nx">unit</span><span class="p">;</span>
-      <span class="p">}</span>
-
-      <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">systolicbp</span> <span class="o">!=</span> <span class="s1">'undefined'</span><span class="p">)</span>  <span class="p">{</span>
-        <span class="nx">p</span><span class="p">.</span><span class="nx">systolicbp</span> <span class="o">=</span> <span class="nx">systolicbp</span><span class="p">;</span>
-      <span class="p">}</span>
-
-      <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">diastolicbp</span> <span class="o">!=</span> <span class="s1">'undefined'</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">p</span><span class="p">.</span><span class="nx">diastolicbp</span> <span class="o">=</span> <span class="nx">diastolicbp</span><span class="p">;</span>
-      <span class="p">}</span>
-
-      <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">hdl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">'undefined'</span> <span class="o">&amp;&amp;</span> <span class="k">typeof</span> <span class="nx">hdl</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">valueQuantity</span><span class="p">.</span><span class="nx">value</span> <span class="o">!=</span> <span class="s1">'undefined'</span> <span class="o">&amp;&amp;</span> <span class="k">typeof</span> <span class="nx">hdl</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">valueQuantity</span><span class="p">.</span><span class="nx">unit</span> <span class="o">!=</span> <span class="s1">'undefined'</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">p</span><span class="p">.</span><span class="nx">hdl</span> <span class="o">=</span> <span class="nx">hdl</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">valueQuantity</span><span class="p">.</span><span class="nx">value</span> <span class="o">+</span> <span class="s1">' '</span> <span class="o">+</span> <span class="nx">hdl</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">valueQuantity</span><span class="p">.</span><span class="nx">unit</span><span class="p">;</span>
-      <span class="p">}</span>
-
-      <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">ldl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">'undefined'</span> <span class="o">&amp;&amp;</span> <span class="k">typeof</span> <span class="nx">ldl</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">valueQuantity</span><span class="p">.</span><span class="nx">value</span> <span class="o">!=</span> <span class="s1">'undefined'</span> <span class="o">&amp;&amp;</span> <span class="k">typeof</span> <span class="nx">ldl</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">valueQuantity</span><span class="p">.</span><span class="nx">unit</span> <span class="o">!=</span> <span class="s1">'undefined'</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">p</span><span class="p">.</span><span class="nx">ldl</span> <span class="o">=</span> <span class="nx">ldl</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">valueQuantity</span><span class="p">.</span><span class="nx">value</span> <span class="o">+</span> <span class="s1">' '</span> <span class="o">+</span> <span class="nx">ldl</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">valueQuantity</span><span class="p">.</span><span class="nx">unit</span><span class="p">;</span>
-      <span class="p">}</span>
-      <span class="nx">ret</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">p</span><span class="p">);</span>
-    <span class="p">});</span>
-  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-    <span class="nx">onError</span><span class="p">();</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-<span class="p">...</span>
-</code></pre>
-
 <p>With access token in hand we&rsquo;re ready to request a FHIR resource and again, we will be using fhir-client.js.</p>
 
 <p>For the purposes of this tutorial we&rsquo;ll be retrieving basic information about the patient and a couple of basic observations to display.</p>
@@ -557,29 +466,6 @@ The OAuth 2 client id is an identifier, not a secret. As such, it does not need 
       <span class="nt">&lt;td</span> <span class="na">id=</span><span class="s">'age'</span><span class="nt">&gt;&lt;/td&gt;</span>
     <span class="nt">&lt;/tr&gt;</span>
   <span class="nt">&lt;/table&gt;</span>
-  <span class="nt">&lt;h2&gt;</span>Observation Resource<span class="nt">&lt;/h2&gt;</span>
-  <span class="nt">&lt;table&gt;</span>
-    <span class="nt">&lt;tr&gt;</span>
-      <span class="nt">&lt;th&gt;</span>Height:<span class="nt">&lt;/th&gt;</span>
-      <span class="nt">&lt;td</span> <span class="na">id=</span><span class="s">'height'</span><span class="nt">&gt;&lt;/td&gt;</span>
-    <span class="nt">&lt;/tr&gt;</span>
-    <span class="nt">&lt;tr&gt;</span>
-      <span class="nt">&lt;th&gt;</span>Systolic Blood Pressure:<span class="nt">&lt;/th&gt;</span>
-      <span class="nt">&lt;td</span> <span class="na">id=</span><span class="s">'systolicbp'</span><span class="nt">&gt;&lt;/td&gt;</span>
-    <span class="nt">&lt;/tr&gt;</span>
-    <span class="nt">&lt;tr&gt;</span>
-      <span class="nt">&lt;th&gt;</span>Diastolic Blood Pressure:<span class="nt">&lt;/th&gt;</span>
-      <span class="nt">&lt;td</span> <span class="na">id=</span><span class="s">'diastolicbp'</span><span class="nt">&gt;&lt;/td&gt;</span>
-    <span class="nt">&lt;/tr&gt;</span>
-    <span class="nt">&lt;tr&gt;</span>
-      <span class="nt">&lt;th&gt;</span>LDL:<span class="nt">&lt;/th&gt;</span>
-      <span class="nt">&lt;td</span> <span class="na">id=</span><span class="s">'ldl'</span><span class="nt">&gt;&lt;/td&gt;</span>
-    <span class="nt">&lt;/tr&gt;</span>
-    <span class="nt">&lt;tr&gt;</span>
-      <span class="nt">&lt;th&gt;</span>HDL:<span class="nt">&lt;/th&gt;</span>
-      <span class="nt">&lt;td</span> <span class="na">id=</span><span class="s">'hdl'</span><span class="nt">&gt;&lt;/td&gt;</span>
-    <span class="nt">&lt;/tr&gt;</span>
-  <span class="nt">&lt;/table&gt;</span>
 <span class="nt">&lt;/div&gt;</span>
 ...
 </code></pre>
@@ -597,10 +483,6 @@ The OAuth 2 client id is an identifier, not a secret. As such, it does not need 
   <span class="nx">$</span><span class="p">(</span><span class="s1">'#birthdate'</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">birthdate</span><span class="p">);</span>
   <span class="nx">$</span><span class="p">(</span><span class="s1">'#age'</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">age</span><span class="p">);</span>
   <span class="nx">$</span><span class="p">(</span><span class="s1">'#height'</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">height</span><span class="p">);</span>
-  <span class="nx">$</span><span class="p">(</span><span class="s1">'#systolicbp'</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">systolicbp</span><span class="p">);</span>
-  <span class="nx">$</span><span class="p">(</span><span class="s1">'#diastolicbp'</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">diastolicbp</span><span class="p">);</span>
-  <span class="nx">$</span><span class="p">(</span><span class="s1">'#ldl'</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">ldl</span><span class="p">);</span>
-  <span class="nx">$</span><span class="p">(</span><span class="s1">'#hdl'</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">hdl</span><span class="p">);</span>
 <span class="p">};</span>
 <span class="p">...</span>
 </code></pre>
@@ -617,7 +499,22 @@ The OAuth 2 client id is an identifier, not a secret. As such, it does not need 
 
 <p>Next log back into the HSPC Sandbox and click on the app you&rsquo;ve registered (My amazing SMART app). To launch your app through the code console click the &ldquo;Begin Testing&rdquo; button. The console will ask if the app you&rsquo;re launching requires a patient in context. Our app requires a patient, so select yes and choose a patient. Please note the millennium username and password, you&rsquo;ll need this credential when prompted. Finally, click launch and the console will redirect to your application.</p>
 
+<h1 id="next-steps">Vendor Support</h1>
 
+
+
+
+<p>From FHIR API perspective, all vendors have public facing documentation linked below</p>
+<ul>
+<li><a href="https://developer.allscripts.com/Content/fhir/index.html">AllScript</a></li>
+<li><a href="https://open.epic.com/Interface/FHIR">Epic</a></li>
+<li><a href="http://fhir.cerner.com/millennium/dstu2/">Cerner</a></li>
+<li><a href="https://www.athenahealth.com/developer-portal/developer-toolkit/by-standard">AthenaHealth</a></li>
+</ul>
+<p>Status of support</p>
+<ul>
+<li>http://docs.smarthealthit.org/fhir-support/</li>
+</ul>
 
 <h1 id="next-steps">Next Steps</h1>
 
@@ -629,16 +526,15 @@ The OAuth 2 client id is an identifier, not a secret. As such, it does not need 
 <li>Run the app in HSPC&rsquo;s SMART on FHIR sandbox.</li>
 </ul>
 
-<p>We&rsquo;ve created a very basic application that meets the base requirements of being a SMART app. This application would require a fair amount of polish before being ready to be deployed in a production environment. A couple of next steps you could look at are:</p>
+<p>We&rsquo;ve created a very basic application that meets the base requirements of being a SMART app. A couple of next steps you could look at are:</p>
 
 <ul>
 <li>Try calling another resource.</li>
-<li>Write unit tests for the application.</li>
-<li>Pull in fhir-client.js through a package manager like webpack.</li>
-<li>Localize and Internationalize your application.</li>
+<li>Try Cerner SMART on FHIR Tutorials</li>
+<li>Register and launch apps with Epic and Cerner open sandbox</li>
 </ul>
 
-<p>We&rsquo;re excited to see what you&rsquo;ll build next!</p>
+<p>We&rsquo;re excited to see what you&rsquo;ll do the rolling out and scaling the implementation process!</p>
 
       </div>
       <div class="dark-box">
